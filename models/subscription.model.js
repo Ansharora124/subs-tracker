@@ -86,11 +86,11 @@ if(!this.renewalDate){
         yearly:365,
 
     };
-    this.renewableDate=new Date(this.startDate);
-    this.renewableDate.setDate(this.renewableDate.getDate()+renewalPeriods[this.frequency]);
+    this.renewalDate=new Date(this.startDate);
+    this.renewalDate.setDate(this.renewalDate.getDate()+renewalPeriods[this.frequency]);
 
     }
-    if(this.renewableDate < new Date()){
+    if(this.renewalDate < new Date()){
 this.status='expired';
 
 
