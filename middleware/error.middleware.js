@@ -1,13 +1,13 @@
 const errorMiddleware = (err, req, res, next) => {
     try{
-let error={ ...error };
+let error={ ...err };
 error.message = err.message;
 
 // Log the error (you can use a logging library here)
 console.error(err);
 
 //mongoose bad ObjectId
-if(err.name ==='castError'){
+if(err.name ==='CastError'){
     const message='Resource not found';
     error=new Error(message);
     error.statusCode=404;
@@ -22,7 +22,7 @@ if(err.name ==='castError'){
 }
 
 //mongoose validation error
-if(error.name ==='validationError')
+if(err.name ==='ValidationError')
 {
     const message=Object.values(err.errors).map(val=>val.message).join(', ');
     error=new Error(message);
@@ -36,5 +36,7 @@ error:error.message || 'Server Error'
         next(error);
     }
 }
+
+export default errorMiddleware;
 
 

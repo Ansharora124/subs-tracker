@@ -14,11 +14,11 @@ const userSchema=new mongoose.Schema({
     type:String,
     required:[true,'email is req'],
     trim:true,
-    minLength=5,
-    maxLength=50,
-    unique=true,
-    lowercase=true,
-    match=[/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,'please enter a valid email'],
+    minLength:5,
+    maxLength:50,
+    unique:true,
+    lowercase:true,
+    match:[/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,'please enter a valid email'],
 
         
     },
@@ -26,7 +26,7 @@ const userSchema=new mongoose.Schema({
     type:String,
     required:[true,'password is req'],
   
-    minLength=6,
+    minLength:6,
     
 
     }
