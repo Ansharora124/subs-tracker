@@ -23,7 +23,7 @@ if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
 
 } catch(error){
      res.status(401).json({message:'Unauthorized: Invalid token',error:error.message});
-}
+} 
 }
 
 export default authorized;
