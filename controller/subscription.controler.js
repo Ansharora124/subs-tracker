@@ -1,4 +1,6 @@
 import Subscription from '../models/subscription.model.js';
+import {workflowClient} from '../config/upstash.js';
+import {serverURL} from '../config/env.js';
 
 export const createSubscription=async (req,res,next)=>{
 try{
@@ -8,8 +10,31 @@ try{
          
     });
 
+    let workflowRunId = null;
+    let workflowErrorMessage = null;
 
-res.status(201).json({success:true,data:subscription}); 
+    try {
+        const triggerResult = await workflowClient.trigger({
+            url: `${serverURL}/api/v1/workflow/subscription/reminders`,
+            body: { subscriptionId: subscription._id.toString() },
+        });
+        workflowRunId = triggerResult.workflowRunId;
+        console.log(`Workflow triggered for subscription ${subscription._id}. Run ID: ${workflowRunId}`);
+    } catch (workflowError) {
+        // Keep subscription creation successful even if workflow trigger fails.
+        workflowErrorMessage = workflowError.message;
+        console.error(`Workflow trigger failed for subscription ${subscription._id}:`, workflowError.message);
+    }
+
+res.status(201).json({
+    success:true,
+    data:subscription,
+    workflow:{
+        triggered:Boolean(workflowRunId),
+        workflowRunId,
+        error:workflowErrorMessage,
+    },
+}); 
 }catch(e){
  next(e);
 
@@ -21,7 +46,7 @@ export const getUserSubscriptions=async (req,res,next)=>{
 try{
 if(req.user.id!==req.params.id){
    const error =new Error('Unauthorized');
-   error.status=401;
+    error.statusCode=401;
    throw error;
 
 

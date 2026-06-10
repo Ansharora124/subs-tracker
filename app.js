@@ -8,18 +8,20 @@ import arjectMiddleware from './controller/arject.middleware.js';
 import authRouter from './routes/auth.routes.js';
 import subsRouter from './routes/subscription.router.js';
 import userRouter from './routes/user.routes.js';
+import workflowRouter from './routes/workflow.routes.js';
 
 const app=express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
+app.use(arjectMiddleware);
 
 app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/users',userRouter);
 app.use('/api/v1/subscription',subsRouter);
+app.use('/api/v1/workflow',workflowRouter);
 app.use(errorMiddleware);
-app.use(arjectMiddleware);
 
 app.get('/',(req,res)=>{
     res.send({body: "welcome to subs api "});
