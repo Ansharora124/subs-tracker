@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import connectToDatabase from './database/mongodb.js';
 import arjectMiddleware from './controller/arject.middleware.js';
 
+
 import authRouter from './routes/auth.routes.js';
 import subsRouter from './routes/subscription.router.js';
 import userRouter from './routes/user.routes.js';

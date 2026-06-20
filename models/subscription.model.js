@@ -59,7 +59,18 @@ const subscriptionSchema=new mongoose.Schema({
     
      renewalDate:{
         type:Date,
-        required:true,
+        default:function () {
+            const renewalPeriods={
+                daily:1,
+                weekly:7,
+                monthly:30,
+                yearly:365,
+            };
+
+            const renewalDate=new Date(this.startDate);
+            renewalDate.setDate(renewalDate.getDate()+ (renewalPeriods[this.frequency] ?? renewalPeriods.monthly));
+            return renewalDate;
+        },
         validate:{
             validator:function (value) {
                 return value > this.startDate;
@@ -78,7 +89,7 @@ const subscriptionSchema=new mongoose.Schema({
 
 },{timestamps:true} );
 subscriptionSchema.pre('save',function () {
-if(!this.renewalDate){
+if(this.isModified('startDate') || this.isModified('frequency') || !this.renewalDate){
     const renewalPeriods={
         daily:1,
         weekly:7,
@@ -87,7 +98,7 @@ if(!this.renewalDate){
 
     };
     this.renewalDate=new Date(this.startDate);
-    this.renewalDate.setDate(this.renewalDate.getDate()+renewalPeriods[this.frequency]);
+    this.renewalDate.setDate(this.renewalDate.getDate()+(renewalPeriods[this.frequency] ?? renewalPeriods.monthly));
 
     }
     if(this.renewalDate < new Date()){

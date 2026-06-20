@@ -2,6 +2,10 @@ import aj from "../config/arject.js";
 
 const arjectMiddleware=async (req,res,next)=>{
 try{
+    if (req.originalUrl.startsWith('/api/v1/workflow')) {
+        return next();
+    }
+
     const decision =await aj.protect(req,{requested:1});
 if(decision.isdenied){
     if(decision.reason.isRateLimit()){
