@@ -3,7 +3,7 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { serve } = require("@upstash/workflow/express");
 import Subscription from '../models/subscription.model.js';
-import { sendReminderEmail } from '../utils/snd_email.js'
+import { sendReminderEmail } from '../utils/send-email.js'
 
 const REMINDERS = [7, 5, 2, 1]
 
