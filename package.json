@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "client:dev": "vite --host 0.0.0.0",
+    "client:build": "vite build",
     "qstash:dev": "npx @upstash/qstash-cli dev -port=8081 -log-port=8082"
   },
   "dependencies": {
@@ -22,12 +24,16 @@
     "mongodb": "^7.2.0",
     "mongoose": "^9.6.1",
     "morgan": "~1.9.1",
-    "nodemailer": "^6.10.1"
+    "nodemailer": "^6.10.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.2.1",
     "globals": "^17.5.0",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "vite": "^6.0.7"
   }
 }

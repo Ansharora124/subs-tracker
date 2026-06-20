@@ -1,5 +1,7 @@
 import arcjet, { shield, detectBot, tokenBucket } from "@arcjet/node";
-import { ARJECT_KEY } from "./env.js";
+import { ARJECT_KEY, NODE_ENV } from "./env.js";
+
+const arcjetMode = NODE_ENV === "production" ? "LIVE" : "DRY_RUN";
 
 const aj = arcjet({
   // Get your site key from https://app.arcjet.com and set it as an environment
@@ -7,10 +9,10 @@ const aj = arcjet({
   key:ARJECT_KEY,
   rules: [
     // Shield protects your app from common attacks e.g. SQL injection
-    shield({ mode: "LIVE" }),
+    shield({ mode: arcjetMode }),
     // Create a bot detection rule
     detectBot({
-      mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
+      mode: arcjetMode, // Blocks in production, logs in development.
       // Block all bots except the following
       allow: [
         "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
@@ -21,7 +23,7 @@ const aj = arcjet({
       ],
     }),
      tokenBucket({
-      mode: "LIVE",
+      mode: arcjetMode,
       // Tracked by IP address by default, but this can be customized
       // See https://docs.arcjet.com/fingerprints
       //characteristics: ["ip.src"],
