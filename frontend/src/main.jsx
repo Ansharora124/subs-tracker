@@ -69,7 +69,7 @@ function App() {
   }, [signedIn, user?._id]);
 
   return (
-    <main className="app">
+    <main className={`app ${signedIn ? '' : 'auth-shell'}`}>
       {!signedIn ? (
         <AuthPanel
           mode={mode}
@@ -122,37 +122,64 @@ function AuthPanel({ mode, setMode, api, saveSession, notify }) {
   };
 
   return (
-    <section className="panel auth">
-      <p className="eyebrow">SubDub</p>
-      <h1>Subscription tracker</h1>
-      <p className="muted">Track recurring plans, renewal dates, and reminder emails from one connected dashboard.</p>
+    <section className="auth-stage">
+      <div className="auth-copy">
+        <p className="auth-kicker">SubDub</p>
+        <h1>Own every renewal before it owns you.</h1>
+        <p>Track recurring plans, renewal dates, and reminder emails from one calm command center.</p>
 
-      <div className="tabs">
-        <button className={`tab ${mode === 'signin' ? 'active' : ''}`} type="button" onClick={() => setMode('signin')}>
-          Sign in
-        </button>
-        <button className={`tab ${mode === 'signup' ? 'active' : ''}`} type="button" onClick={() => setMode('signup')}>
-          Sign up
-        </button>
+        <div className="auth-preview" aria-hidden="true">
+          <div className="preview-head">
+            <span>June outlook</span>
+            <strong>$86.72</strong>
+          </div>
+          <div className="preview-row">
+            <span>Netflix</span>
+            <b>Tonight</b>
+          </div>
+          <div className="preview-row">
+            <span>Figma</span>
+            <b>Jun 24</b>
+          </div>
+          <div className="preview-row">
+            <span>Spotify</span>
+            <b>Jul 02</b>
+          </div>
+        </div>
       </div>
 
-      <form className="form" onSubmit={onSubmit}>
-        {mode === 'signup' && (
-          <Field label="Name">
-            <input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required />
+      <div className="panel auth">
+        <p className="eyebrow">Welcome back</p>
+        <h2>{mode === 'signup' ? 'Create your account' : 'Sign in to SubDub'}</h2>
+        <p className="muted">Keep your subscriptions sharp, visible, and under control.</p>
+
+        <div className="tabs">
+          <button className={`tab ${mode === 'signin' ? 'active' : ''}`} type="button" onClick={() => setMode('signin')}>
+            Sign in
+          </button>
+          <button className={`tab ${mode === 'signup' ? 'active' : ''}`} type="button" onClick={() => setMode('signup')}>
+            Sign up
+          </button>
+        </div>
+
+        <form className="form" onSubmit={onSubmit}>
+          {mode === 'signup' && (
+            <Field label="Name">
+              <input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required placeholder="Alex Morgan" />
+            </Field>
+          )}
+
+          <Field label="Email">
+            <input type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} required placeholder="you@example.com" />
           </Field>
-        )}
 
-        <Field label="Email">
-          <input type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} required />
-        </Field>
+          <Field label="Password">
+            <input type="password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} required minLength="6" placeholder="Password" />
+          </Field>
 
-        <Field label="Password">
-          <input type="password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} required minLength="6" />
-        </Field>
-
-        <button className="primary" type="submit">{mode === 'signup' ? 'Create account' : 'Sign in'}</button>
-      </form>
+          <button className="primary" type="submit">{mode === 'signup' ? 'Create account' : 'Sign in'}</button>
+        </form>
+      </div>
     </section>
   );
 }
@@ -164,20 +191,34 @@ function Dashboard({ user, subscriptions, api, notify, signOut, loadSubscription
         <div>
           <p className="eyebrow">SubDub</p>
           <h1>Welcome, {user.name}</h1>
+          <p className="dashboard-subtitle">A clean view of what renews, what costs, and what needs attention.</p>
         </div>
         <button className="ghost" type="button" onClick={signOut}>Sign out</button>
       </header>
 
       <Stats subscriptions={subscriptions} />
 
-      <div className="grid">
+      <div className="grid workspace-grid">
         <SubscriptionForm api={api} notify={notify} loadSubscriptions={loadSubscriptions} />
-        <EmailTest user={user} api={api} notify={notify} />
+        <aside className="side-stack">
+          <EmailTest user={user} api={api} notify={notify} />
+          <section className="panel insight-panel">
+            <p className="eyebrow">Billing rhythm</p>
+            <h2>Keep renewals visible</h2>
+            <p className="muted">Use renewal dates to spot upcoming charges and send yourself reminder emails before the bill lands.</p>
+            <div className="insight-meter">
+              <span />
+            </div>
+          </section>
+        </aside>
       </div>
 
-      <section className="panel">
+      <section className="panel subscriptions-panel">
         <div className="section-head">
-          <h2>Your subscriptions</h2>
+          <div>
+            <p className="eyebrow">Portfolio</p>
+            <h2>Your subscriptions</h2>
+          </div>
           <button className="ghost small" type="button" onClick={() => loadSubscriptions().then(() => notify('Subscriptions refreshed')).catch((error) => notify(error.message, true))}>
             Refresh
           </button>
@@ -266,8 +307,14 @@ function SubscriptionForm({ api, notify, loadSubscriptions }) {
   };
 
   return (
-    <section className="panel">
-      <h2>Add subscription</h2>
+    <section className="panel form-panel">
+      <div className="section-head">
+        <div>
+          <p className="eyebrow">New plan</p>
+          <h2>Add subscription</h2>
+        </div>
+        <span className="form-badge">Active tracking</span>
+      </div>
       <form className="form" onSubmit={onSubmit}>
         <div className="two">
           <Field label="Name">
@@ -333,9 +380,12 @@ function EmailTest({ user, api, notify }) {
   };
 
   return (
-    <section className="panel">
+    <section className="panel email-panel">
       <div className="section-head">
-        <h2>Reminder test</h2>
+        <div>
+          <p className="eyebrow">Reminders</p>
+          <h2>Reminder test</h2>
+        </div>
         <button className="ghost small" type="button" onClick={() => setTo(user.email || '')}>Use my email</button>
       </div>
       <form className="form" onSubmit={onSubmit}>
